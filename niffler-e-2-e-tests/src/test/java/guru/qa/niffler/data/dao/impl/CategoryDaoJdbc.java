@@ -86,7 +86,7 @@ public class CategoryDaoJdbc implements CategoryDao {
             ps.setString(1, username);
             ps.execute();
             try (ResultSet rs = ps.getResultSet()) {
-                if (rs.next()) {
+                while (rs.next()) {
                     CategoryEntity ce = new CategoryEntity();
                     ce.setId(rs.getObject("id", UUID.class));
                     ce.setUsername(rs.getString("username"));
