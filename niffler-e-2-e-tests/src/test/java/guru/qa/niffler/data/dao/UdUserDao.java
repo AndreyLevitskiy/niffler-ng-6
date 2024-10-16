@@ -13,7 +13,7 @@ public interface UdUserDao {
 
   Optional<UserEntity> findById(UUID id);
 
-  Optional<UserEntity> findAllByUsername(String username);
+  Optional<UserEntity> findByUsername(String username);
 
   void deleteSpend(UserEntity user);
 }

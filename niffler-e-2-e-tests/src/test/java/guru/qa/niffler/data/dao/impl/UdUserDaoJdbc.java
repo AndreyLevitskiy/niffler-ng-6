@@ -23,7 +23,7 @@ public class UdUserDaoJdbc implements UdUserDao {
     @Override
     public UserEntity create(UserEntity user) {
         try (PreparedStatement ps = connection.prepareStatement(
-                "INSERT INTO user (username, currency, firstname, surname, photo, photo_small, full_name) " +
+                "INSERT INTO \"user\" (username, currency, firstname, surname, photo, photo_small, full_name) " +
                         "VALUES (?, ?, ?, ?, ?, ?, ?),",
                 Statement.RETURN_GENERATED_KEYS
         )) {
@@ -55,8 +55,7 @@ public class UdUserDaoJdbc implements UdUserDao {
     @Override
     public Optional<UserEntity> findById(UUID id) {
         try (PreparedStatement ps = connection.prepareStatement(
-                "SELECT * FROM user WHERE id = ?",
-                Statement.RETURN_GENERATED_KEYS
+                "SELECT * FROM user WHERE id = ?"
         )) {
             ps.setString(1, id.toString());
             ps.execute();
@@ -83,7 +82,7 @@ public class UdUserDaoJdbc implements UdUserDao {
     }
 
     @Override
-    public Optional<UserEntity> findAllByUsername(String username) {
+    public Optional<UserEntity> findByUsername(String username) {
         List<UserEntity> userEntityList = new ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(
                 "SELECT * FROM user WHERE username = ?"

@@ -59,7 +59,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
   }
 
   @Override
-  public Optional<UserEntity> findAllByUsername(String username) {
+  public Optional<UserEntity> findByUsername(String username) {
     return Optional.empty();
   }
 

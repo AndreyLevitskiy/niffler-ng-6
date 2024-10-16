@@ -7,6 +7,7 @@ import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.model.CurrencyValues;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,7 +32,7 @@ public class SpendDaoJdbc implements SpendDao {
                 Statement.RETURN_GENERATED_KEYS
         )) {
             ps.setString(1, spend.getUsername());
-            ps.setDate(2, spend.getSpendDate());
+            ps.setDate(2, new Date(spend.getSpendDate().getTime()));
             ps.setString(3, spend.getCurrency().name());
             ps.setDouble(4, spend.getAmount());
             ps.setString(5, spend.getDescription());
@@ -70,7 +71,9 @@ public class SpendDaoJdbc implements SpendDao {
                     se.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
                     se.setAmount(rs.getDouble("amount"));
                     se.setDescription(rs.getString("description"));
-                    se.setCategory(rs.getObject("category_id", CategoryEntity.class));
+                    se.setCategory(new CategoryDaoJdbc(connection)
+                            .findCategoryById(rs.getObject("category_id", UUID.class))
+                            .orElse(null));
                     return Optional.of(se);
                 } else {
                     return Optional.empty();
@@ -98,7 +101,9 @@ public class SpendDaoJdbc implements SpendDao {
                     se.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
                     se.setAmount(rs.getDouble("amount"));
                     se.setDescription(rs.getString("description"));
-                    se.setCategory(rs.getObject("category_id", CategoryEntity.class));
+                    se.setCategory(new CategoryDaoJdbc(connection)
+                            .findCategoryById(rs.getObject("category_id", UUID.class))
+                            .orElse(null));
                     spendEntityList.add(se);
                 }
                 return spendEntityList;
@@ -113,7 +118,7 @@ public class SpendDaoJdbc implements SpendDao {
         try (PreparedStatement ps = connection.prepareStatement(
                 "DELETE * FROM spend WHERE id = ?"
         )) {
-            ps.setString(1, spend.getId().toString());
+            ps.setObject(1, spend.getId().toString());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
