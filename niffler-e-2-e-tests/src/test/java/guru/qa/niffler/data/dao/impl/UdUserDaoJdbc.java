@@ -112,12 +112,39 @@ public class UdUserDaoJdbc implements UdUserDao {
     }
 
     @Override
-    public void deleteSpend(UserEntity user) {
+    public void delete(UserEntity user) {
         try (PreparedStatement ps = connection.prepareStatement(
                 "DELETE * FROM user WHERE id = ?"
         )) {
             ps.setString(1, user.getId().toString());
             ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<UserEntity> findAll() {
+        List<UserEntity> userEntityList = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT * FROM user"
+        )) {
+            ps.execute();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                while (rs.next()) {
+                    UserEntity ue = new UserEntity();
+                    ue.setId(rs.getObject("id", UUID.class));
+                    ue.setUsername(rs.getString("username"));
+                    ue.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
+                    ue.setFirstname(rs.getString("firstname"));
+                    ue.setSurname(rs.getString("surname"));
+                    ue.setPhoto(rs.getBytes("photo"));
+                    ue.setPhotoSmall(rs.getBytes("photo_small"));
+                    ue.setFullname(rs.getString("full_name"));
+                    userEntityList.add(ue);
+                }
+                    return userEntityList;
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
