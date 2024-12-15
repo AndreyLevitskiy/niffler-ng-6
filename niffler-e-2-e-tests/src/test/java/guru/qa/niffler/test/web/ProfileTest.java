@@ -2,18 +2,25 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.jupiter.Category;
+import guru.qa.niffler.jupiter.annotation.Category;
+import guru.qa.niffler.jupiter.extension.UsersQueueExtension;
+import guru.qa.niffler.jupiter.extension.UsersQueueExtension.StaticUser;
+import guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.page.ProfilePage;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(UsersQueueExtension.class)
 public class ProfileTest {
 
     private static final Config CFG = Config.getInstance();
     private final MainPage mainPage = new MainPage();
 
+    @Disabled
     @Category(
             username = "duck",
             archived = true
@@ -28,6 +35,7 @@ public class ProfileTest {
                 .checkArchivedCategoryExists(category.name());
     }
 
+    @Disabled
     @Category(
             username = "duck",
             archived = false
@@ -40,5 +48,23 @@ public class ProfileTest {
 
         Selenide.open(CFG.frontUrl() + "profile", ProfilePage.class)
                 .checkActiveCategoryExists(category.name());
+    }
+
+    @Test
+    void testWithEmptyUser0(@UserType(empty = true) StaticUser user) throws InterruptedException {
+        Thread.sleep(1000);
+        System.out.println(user);
+    }
+
+    @Test
+    void testWithEmptyUser1(@UserType(empty = false) StaticUser user) throws InterruptedException {
+        Thread.sleep(1000);
+        System.out.println(user);
+    }
+
+    @Test
+    void testWithEmptyUser2(@UserType(empty = false) StaticUser user) throws InterruptedException {
+        Thread.sleep(1000);
+        System.out.println(user);
     }
 }
