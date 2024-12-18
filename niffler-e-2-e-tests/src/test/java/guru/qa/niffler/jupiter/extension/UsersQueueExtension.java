@@ -9,9 +9,11 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 public class UsersQueueExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
@@ -39,10 +41,10 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterEachCallbac
     public void beforeEach(ExtensionContext context) throws Exception {
         Arrays.stream(context.getRequiredTestMethod().getParameters())
                 .filter(p -> AnnotationSupport.isAnnotated(p, UserType.class))
-                .findFirst()
-                .map(p -> p.getAnnotation(UserType.class))
-                .ifPresent(
-                        ut -> {
+                .forEach(
+                        p -> {
+                            UserType ut = p.getAnnotation(UserType.class);
+
                             Optional<StaticUser> user = Optional.empty();
                             StopWatch sw = StopWatch.createStarted();
                             while (user.isEmpty() && sw.getTime(TimeUnit.SECONDS) < 30) {
@@ -57,10 +59,11 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterEachCallbac
                             );
                             user.ifPresentOrElse(
                                     u -> {
-                                        context.getStore(NAMESPACE)
-                                                .put(
+                                        ((Map<UserType, StaticUser>) context.getStore(NAMESPACE)
+                                                .getOrComputeIfAbsent(
                                                         context.getUniqueId(),
-                                                        u);
+                                                        key -> new HashMap<>()
+                                                )).put(ut, u);
                                     },
                                     () -> {
                                         throw new IllegalStateException("No users available after 30 sec");
@@ -72,11 +75,15 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterEachCallbac
 
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
-        StaticUser user = context.getStore(NAMESPACE).get(context.getUniqueId(), StaticUser.class);
-        if (user.empty()) {
-            EMPTY_USERS.add(user);
-        } else {
-            NOT_EMPTY_USERS.add(user);
+        Map<UserType, StaticUser> map = context.getStore(NAMESPACE).get(
+                context.getUniqueId(),
+                Map.class);
+        for (Map.Entry<UserType, StaticUser> e : map.entrySet()) {
+            if (e.getKey().empty()) {
+                EMPTY_USERS.add(e.getValue());
+            } else {
+                NOT_EMPTY_USERS.add(e.getValue());
+            }
         }
     }
 

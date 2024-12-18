@@ -51,7 +51,9 @@ public class ProfileTest {
     }
 
     @Test
-    void testWithEmptyUser0(@UserType(empty = true) StaticUser user) throws InterruptedException {
+    void testWithEmptyUser0(
+            @UserType(empty = true) StaticUser user0,
+            @UserType(empty = true) StaticUser user1) throws InterruptedException {
         Thread.sleep(1000);
         System.out.println(user);
     }
