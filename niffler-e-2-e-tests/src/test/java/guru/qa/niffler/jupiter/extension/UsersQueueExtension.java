@@ -32,10 +32,10 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterEachCallbac
     private static final Queue<StaticUser> WITH_OUTCOME_REQUEST_USERS = new ConcurrentLinkedQueue<>();
 
     static {
-        EMPTY_USERS.add(new StaticUser("gale.bernier", "12345", null, null, null));
-        WITH_FRIEND_USERS.add(new StaticUser("duck", "12345", "gale.bernier", null, null));
-        WITH_INCOME_REQUEST_USERS.add(new StaticUser("user", "password", null, "john", null));
-        WITH_OUTCOME_REQUEST_USERS.add(new StaticUser("admin", "12345", null, null, "kyle"));
+        EMPTY_USERS.add(new StaticUser("bee", "12345", null, null, null));
+        WITH_FRIEND_USERS.add(new StaticUser("duck", "12345", "dima", null, null));
+        WITH_INCOME_REQUEST_USERS.add(new StaticUser("dima", "12345", null, "bee", null));
+        WITH_OUTCOME_REQUEST_USERS.add(new StaticUser("barsik", "12345", null, null, "bill"));
     }
 
     @Target(ElementType.PARAMETER)

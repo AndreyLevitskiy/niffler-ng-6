@@ -49,24 +49,4 @@ public class ProfileTest {
         Selenide.open(CFG.frontUrl() + "profile", ProfilePage.class)
                 .checkActiveCategoryExists(category.name());
     }
-
-    @Test
-    void testWithEmptyUser0(
-            @UserType(empty = true) StaticUser user0,
-            @UserType(empty = true) StaticUser user1) throws InterruptedException {
-        Thread.sleep(1000);
-        System.out.println(user);
-    }
-
-    @Test
-    void testWithEmptyUser1(@UserType(empty = false) StaticUser user) throws InterruptedException {
-        Thread.sleep(1000);
-        System.out.println(user);
-    }
-
-    @Test
-    void testWithEmptyUser2(@UserType(empty = false) StaticUser user) throws InterruptedException {
-        Thread.sleep(1000);
-        System.out.println(user);
-    }
 }
