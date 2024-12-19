@@ -9,7 +9,6 @@ import guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType;
 import guru.qa.niffler.page.FriendsPage;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.ProfilePage;
-import guru.qa.niffler.page.RegistrationPage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -37,15 +36,36 @@ public class FriendsWebTest {
     @Test
     @ExtendWith(UsersQueueExtension.class)
     void friendsTableShouldBeEmptyForNewUser(@UserType(EMPTY) StaticUser user) {
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .login(user.username(), user.password());
+        profilePage
+                .openProfile();
+        friendsPage
+                .openFriends()
+                .checkFriendNotExists(user.friend());
     }
 
     @Test
     @ExtendWith(UsersQueueExtension.class)
     void incomeInvitationBePresentInFriendsTable(@UserType(WITH_INCOME_REQUEST) StaticUser user) {
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .login(user.username(), user.password());
+        profilePage
+                .openProfile();
+        friendsPage
+                .openFriends();
+        //TODO
     }
 
     @Test
     @ExtendWith(UsersQueueExtension.class)
     void outcomeInvitationBePresentInAllPeoplesTable(@UserType(WITH_OUTCOME_REQUEST) StaticUser user) {
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .login(user.username(), user.password());
+        profilePage
+                .openProfile();
+        friendsPage
+                .openFriends();
+        //TODO
     }
 }
