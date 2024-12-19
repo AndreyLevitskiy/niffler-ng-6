@@ -113,6 +113,7 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterEachCallbac
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), StaticUser.class);
+        Map<UserType, StaticUser> map = extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), HashMap.class);
+        return map.get(parameterContext.getAnnotatedElement().getAnnotation(UserType.class));
     }
 }

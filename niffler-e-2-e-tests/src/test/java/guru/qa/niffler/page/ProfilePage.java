@@ -40,4 +40,11 @@ public class ProfilePage {
                 .shouldBe(visible);
         return this;
     }
+
+    public ProfilePage openProfile() {
+        profilePic
+                .shouldBe(visible.because("Profile pic should be visible"))
+                .click();
+        return this;
+    }
 }
