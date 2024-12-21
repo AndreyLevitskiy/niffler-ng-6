@@ -53,8 +53,8 @@ public class FriendsWebTest {
         profilePage
                 .openProfile();
         friendsPage
-                .openFriends();
-        //TODO
+                .openFriends()
+                .checkPeopleInIncomeRequests(user.income());
     }
 
     @Test
@@ -65,7 +65,8 @@ public class FriendsWebTest {
         profilePage
                 .openProfile();
         friendsPage
-                .openFriends();
-        //TODO
+                .openFriends()
+                .clickOnTabAllPeople()
+                .checkOutcomeInvitationInAllPeopleTable(user.outcome());
     }
 }
