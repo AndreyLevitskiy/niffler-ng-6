@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.*;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.platform.commons.support.AnnotationSupport;
 
+import static guru.qa.niffler.utils.RandomDataUtils.randomCategory;
 import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
 
 public class CategoryExtension implements BeforeEachCallback, AfterTestExecutionCallback, ParameterResolver {
@@ -20,7 +21,7 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
                 .ifPresent(anno -> {
                     CategoryJson category = new CategoryJson(
                             null,
-                            anno.title().isEmpty() ? generateCategoryTitle() : anno.title(),
+                            anno.title().isEmpty() ? randomCategory() : anno.title(),
                             anno.username(),
                             anno.archived()
                     );
@@ -62,10 +63,5 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
                     category.username(),
                     true));
         }
-    }
-
-    private String generateCategoryTitle() {
-        Faker faker = new Faker();
-        return faker.harryPotter().character() + " " + faker.animal().name();
     }
 }
