@@ -3,6 +3,7 @@ package guru.qa.niffler.test.web;
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.Category;
+import guru.qa.niffler.jupiter.annotation.meta.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.jupiter.extension.UsersQueueExtension;
 import guru.qa.niffler.jupiter.extension.UsersQueueExtension.StaticUser;
@@ -22,10 +23,10 @@ public class ProfileTest {
     private final MainPage mainPage = new MainPage();
 
     @Disabled
-    @Category(
-            username = "duck",
-            archived = true
-    )
+    @User(username = "duck",
+            categories = @Category(
+                    archived = true
+            ))
     @Test
     void archivedCategoryShouldPresentInCategoriesList(CategoryJson category) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
@@ -37,10 +38,10 @@ public class ProfileTest {
     }
 
     @Disabled
-    @Category(
-            username = "duck",
-            archived = false
-    )
+    @User(username = "duck",
+            categories = @Category(
+                    archived = false
+            ))
     @Test
     void activeCategoryShouldPresentInCategoriesList(CategoryJson category) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
