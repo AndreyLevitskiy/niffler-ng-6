@@ -1,5 +1,6 @@
 package guru.qa.niffler.data.entity.spend;
 
+import guru.qa.niffler.model.CategoryJson;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,4 +14,13 @@ public class CategoryEntity implements Serializable {
   private String name;
   private String username;
   private boolean archived;
+
+  public static CategoryEntity fromJson(CategoryJson json) {
+    CategoryEntity ce = new CategoryEntity();
+    ce.setId(json.id());
+    ce.setName(json.name());
+    ce.setUsername(json.username());
+    ce.setArchived(json.archived());
+    return ce;
+  }
 }
