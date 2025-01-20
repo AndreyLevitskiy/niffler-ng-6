@@ -6,12 +6,18 @@ import guru.qa.niffler.data.dao.CategoryDao;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 
 import java.sql.*;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public class CategoryDaoJdbc implements CategoryDao {
 
     private static final Config CFG = Config.getInstance();
+    private final Connection connection;
+
+    public CategoryDaoJdbc(Connection connection) {
+        this.connection = connection;
+    }
 
     @Override
     public CategoryEntity create(CategoryEntity category) {
@@ -70,5 +76,20 @@ public class CategoryDaoJdbc implements CategoryDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Optional<CategoryEntity> findCategoryByUsernameAndCategoryName(String username, String categoryName) {
+        return Optional.empty();
+    }
+
+    @Override
+    public List<CategoryEntity> findAllByUsername(String username) {
+        return List.of();
+    }
+
+    @Override
+    public void deleteCategory(CategoryEntity category) {
+
     }
 }
