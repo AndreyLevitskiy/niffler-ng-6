@@ -112,8 +112,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
     @Override
     public void delete(UserEntity user) {
         try (PreparedStatement ps = connection.prepareStatement(
-                "DELETE * FROM users WHERE id = ?",
-                Statement.RETURN_GENERATED_KEYS)) {
+                "DELETE * FROM users WHERE id = ?")) {
             ps.setObject(1, user.getId().toString());
 
             ps.execute();

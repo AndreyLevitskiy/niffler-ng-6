@@ -135,8 +135,7 @@ public class CategoryDaoJdbc implements CategoryDao {
     public void deleteCategory(CategoryEntity category) {
         try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
-                    "DELETE * FROM spend WHERE id = ?",
-                    Statement.RETURN_GENERATED_KEYS)) {
+                    "DELETE * FROM spend WHERE id = ?")) {
                 ps.setObject(1, category.getId().toString());
 
                 ps.execute();

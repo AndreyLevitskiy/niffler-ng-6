@@ -69,7 +69,7 @@ public class SpendDaoJdbc implements SpendDao {
                         se.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
                         se.setSpendDate(rs.getDate("spend_date"));
                         se.setDescription(rs.getString("description"));
-                        se.setCategory(new CategoryDaoJdbc(connection)
+                        se.setCategory(new CategoryDaoJdbc()
                                 .findCategoryById(rs.getObject("category_id", UUID.class))
                                 .orElse(null));
                         return Optional.of(se);
@@ -103,7 +103,7 @@ public class SpendDaoJdbc implements SpendDao {
                         se.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
                         se.setSpendDate(rs.getDate("spend_date"));
                         se.setDescription(rs.getString("description"));
-                        se.setCategory(new CategoryDaoJdbc(connection)
+                        se.setCategory(new CategoryDaoJdbc()
                                 .findCategoryById(rs.getObject("category_id", UUID.class))
                                 .orElse(null));
                         spendEntityList.add(se);
@@ -120,8 +120,7 @@ public class SpendDaoJdbc implements SpendDao {
     public void deleteSpend(SpendEntity spend) {
         try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
-                    "DELETE * FROM spend WHERE id = ?",
-                    Statement.RETURN_GENERATED_KEYS)) {
+                    "DELETE * FROM spend WHERE id = ?")) {
                 ps.setObject(1, spend.getId().toString());
 
                 ps.execute();
