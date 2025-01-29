@@ -5,13 +5,16 @@ import org.postgresql.ds.PGSimpleDataSource;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Databases {
-    private Databases() {}
+    private Databases() {
+    }
 
     private static final Map<String, DataSource> datasources = new ConcurrentHashMap<>();
+    private static final Map<Long, Map<String, Connection>> threadConnections = new ConcurrentHashMap<>();
 
     private static DataSource dataSource(String jdbcUrl) {
         return datasources.computeIfAbsent(
@@ -25,7 +28,42 @@ public class Databases {
                 });
     }
 
-    public static Connection connection(String jdbcUrl) throws SQLException {
-        return dataSource(jdbcUrl).getConnection();
+    private static Connection connection(String jdbcUrl) throws SQLException {
+        return threadConnections.computeIfAbsent(
+                Thread.currentThread().threadId(),
+                key -> {
+                    try {
+                        return new HashMap<>(Map.of(
+                                jdbcUrl,
+                                dataSource(jdbcUrl).getConnection()
+                        ));
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        ).computeIfAbsent(
+                jdbcUrl,
+                key -> {
+                    try {
+                        return dataSource(jdbcUrl).getConnection();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+    }
+
+    public static void closeAllConnections() {
+        for (Map<String, Connection> connections : threadConnections.values()) {
+            for (Connection connection : connections.values()) {
+                try {
+                    if (connection != null && !connection.isClosed()) {
+                        connection.close();
+                    }
+                } catch (SQLException e) {
+                    //NOP
+                }
+            }
+        }
     }
 }
