@@ -16,7 +16,7 @@ public class JdbcConnectionHolder implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         Optional.ofNullable(threadConnections.remove(Thread.currentThread().threadId()))
                 .ifPresent(connection -> {
                     try {
