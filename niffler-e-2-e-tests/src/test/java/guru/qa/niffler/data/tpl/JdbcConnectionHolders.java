@@ -10,9 +10,8 @@ public class JdbcConnectionHolders implements AutoCloseable {
         this.holders = holders;
     }
 
-
     @Override
-    public void close() throws Exception {
+    public void close() {
         holders.forEach(JdbcConnectionHolder::close);
     }
 }
