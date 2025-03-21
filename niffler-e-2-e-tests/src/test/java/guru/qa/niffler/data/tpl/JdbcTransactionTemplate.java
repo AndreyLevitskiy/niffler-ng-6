@@ -21,7 +21,7 @@ public class JdbcTransactionTemplate {
         return this;
     }
 
-    public <T> T transaction(Supplier<T> action, int isolationLvl) {
+    public <T> T execute(Supplier<T> action, int isolationLvl) {
         Connection connection = null;
         try {
             connection = holder.connection();
@@ -48,7 +48,7 @@ public class JdbcTransactionTemplate {
         }
     }
 
-    public <T> T transaction(Supplier<T> action, String jdbcUrl) {
-        return transaction(action, TRANSACTION_READ_COMMITTED);
+    public <T> T execute(Supplier<T> action) {
+        return execute(action, TRANSACTION_READ_COMMITTED);
     }
 }

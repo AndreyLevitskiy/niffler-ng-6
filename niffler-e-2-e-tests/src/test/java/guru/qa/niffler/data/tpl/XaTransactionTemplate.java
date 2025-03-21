@@ -21,7 +21,7 @@ public class XaTransactionTemplate {
         return this;
     }
 
-    public <T> T transaction(Supplier<T>... actions) {
+    public <T> T execute(Supplier<T>... actions) {
         UserTransaction ut = new UserTransactionImp();
         try {
             ut.begin();
