@@ -2,7 +2,9 @@ package guru.qa.niffler.data.repository.impl;
 
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
+import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
+import guru.qa.niffler.data.mapper.AuthUserEntityRowMapper;
 import guru.qa.niffler.data.repository.AuthUserRepository;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -56,7 +58,7 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
             user.setId(generatedKey);
 
             for (AuthorityEntity a : user.getAuthorities()) {
-                authorityPs.setObject(1, a.getUser().getId());
+                authorityPs.setObject(1, generatedKey);
                 authorityPs.setString(2, a.getAuthority().name());
                 authorityPs.addBatch();
                 authorityPs.clearParameters();
@@ -71,14 +73,26 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
     @Override
     public Optional<AuthUserEntity> findById(UUID id) {
         try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
-                "SELECT * FROM user WHERE id = ?",
+                "SELECT * FROM \"user\" WHERE u JOIN authority a ON u.id = a.user_id WHERE u.id = ?",
                 Statement.RETURN_GENERATED_KEYS)) {
             ps.setObject(1, id);
 
             ps.execute();
 
             try (ResultSet rs = ps.getResultSet()) {
-                if (rs.next()) {
+                AuthUserEntity user = null;
+                List<AuthorityEntity> authorityEntities = new ArrayList<>();
+                while (rs.next()) {
+                    if (user == null) {
+                        user = AuthUserEntityRowMapper.instance.mapRow(rs, 1);
+                    }
+
+                    AuthorityEntity ae = new AuthorityEntity();
+                    ae.setUser(user);
+                    ae.setId(rs.getObject("a.id", UUID.class));
+                    ae.setAuthority(Authority.valueOf(rs.getString("authority")));
+                    authorityEntities.add(ae);
+
                     AuthUserEntity entity = new AuthUserEntity();
                     entity.setId(rs.getObject("id", UUID.class));
                     entity.setUsername(rs.getString("username"));
@@ -88,9 +102,12 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
                     entity.setAccountNonExpired(rs.getBoolean("accountNonExpired"));
                     entity.setAccountNonLocked(rs.getBoolean("accountNonLocked"));
                     entity.setCredentialsNonExpired(rs.getBoolean("credentialsNonExpired"));
-                    return Optional.of(entity);
-                } else {
+                }
+                if (user == null) {
                     return Optional.empty();
+                } else  {
+                    user.setAuthorities(authorityEntities);
+                    return Optional.of(user);
                 }
             }
         } catch (SQLException e) {
