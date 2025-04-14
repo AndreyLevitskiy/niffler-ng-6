@@ -1,12 +1,14 @@
 package guru.qa.niffler.data.entity.userdata;
 
 import guru.qa.niffler.model.CurrencyValues;
+import guru.qa.niffler.model.UserJson;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -94,6 +96,18 @@ public class UserEntity implements Serializable {
         i.remove();
       }
     }
+  }
+
+  public static UserEntity fromJson(UserJson json) {
+    UserEntity ue = new UserEntity();
+    ue.setId(json.id());
+    ue.setCurrency(json.currency());
+    ue.setFirstname(json.firstname());
+    ue.setSurname(json.surname());
+    ue.setFullname(json.fullname());
+    ue.setPhoto(json.photo() != null ? json.photo().getBytes(StandardCharsets.UTF_8) : null);
+    ue.setPhotoSmall(json.photoSmall() != null ? json.photoSmall().getBytes(StandardCharsets.UTF_8) : null);
+    return ue;
   }
 
   @Override
