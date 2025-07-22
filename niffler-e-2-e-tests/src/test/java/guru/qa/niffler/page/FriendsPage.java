@@ -7,7 +7,7 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
-public class FriendsPage {
+public class  FriendsPage {
 
     private final SelenideElement menuItemFriends = $( "[class='link nav-link'][href='/people/friends']");
     private final SelenideElement tabItemAllFriends = $( "[href='/people/all']");
