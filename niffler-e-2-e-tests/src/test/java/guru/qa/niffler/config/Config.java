@@ -1,6 +1,6 @@
 package guru.qa.niffler.config;
 
-public interface Config {
+public interface  Config {
 
   static Config getInstance() {
     return "docker".equals(System.getProperty("test.env"))
