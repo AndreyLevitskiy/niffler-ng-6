@@ -1,6 +1,5 @@
 package guru.qa.niffler.data.mapper;
 
-import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.CategoryDao;
 import guru.qa.niffler.data.dao.impl.CategoryDaoSpringJdbc;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
@@ -11,20 +10,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
-import static guru.qa.niffler.data.Databases.dataSource;
-
 
 public class SpendEntityRowMapper implements RowMapper<SpendEntity> {
 
     public static final SpendEntityRowMapper instance = new SpendEntityRowMapper();
-    private static final Config CFG = Config.getInstance();
 
     private SpendEntityRowMapper() {
     }
 
     @Override
     public SpendEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-        CategoryDao categoryDao = new CategoryDaoSpringJdbc(dataSource(CFG.spendJdbcUrl()));
+        CategoryDao categoryDao = new CategoryDaoSpringJdbc();
         SpendEntity result = new SpendEntity();
         result.setId(rs.getObject("id", UUID.class));
         result.setUsername(rs.getString("username"));

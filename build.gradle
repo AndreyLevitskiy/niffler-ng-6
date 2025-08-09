@@ -3,6 +3,21 @@ plugins {
     id 'com.github.ben-manes.versions' version '0.51.0'
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(22)
+    }
+}
+
+tasks.withType(Test).configureEach {
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(22)
+    }
+    doFirst {
+        println ">> Test task will run on: ${javaLauncher.get().metadata.installationPath}"
+    }
+}
+
 group = 'guru.qa'
 
 allprojects {
@@ -14,7 +29,7 @@ allprojects {
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(21)
+            languageVersion = JavaLanguageVersion.of(22)
         }
     }
 }
@@ -45,5 +60,15 @@ subprojects {
         dockerArch = System.getProperty("os.arch") == "aarch64" || System.getProperty("os.arch") == "arm64"
                 ? "arm64"
                 : "amd64"
+    }
+
+    tasks.withType(Test).configureEach {
+        // выкидываем любой -javaagent, который Gradle подставил
+        jvmArgs = jvmArgs.findAll { !it.startsWith('-javaagent') }
+
+        // чтобы убедиться, выводим финальный список аргументов
+        doFirst {
+            println ">> Final JVM args: $jvmArgs"
+        }
     }
 }
